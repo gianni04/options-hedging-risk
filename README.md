@@ -11,17 +11,18 @@ indices, and a VaR backtest of the hedged position. Python, 2011-2026 data.
   delta at the close, hold ~30 days (3,911 trades). The P&L is explained by
   gamma vs theta, i.e. realized vs implied volatility: R² = 0.93 against the
   gamma-theta sum, 0.60 against implied minus realized vol.
-- **Volatility surface.** Rebuilt every day from four CBOE indices (VIX9D, VIX,
+- **Volatility surface.** Approximated every day from four CBOE indices (VIX9D, VIX,
   VIX3M for the term structure, SKEW for the slope, VVIX for the curvature),
   with a no-arbitrage constraint on the smile.
-- **VIX vs option vol.** VIX is above the at-the-money implied vol. On real SPX
-  chains: ATM 11.3% vs VIX 14.2% (22 Sep 2026), ATM 12.7% vs VIX 16.1%
-  (28 Sep 2026). Selling the straddle at the VIX level shows +67 bp per trade;
-  at the ATM level it is -14 bp after costs.
-- **VaR of the hedged book.** Five methods, backtested over 3,433 days. Delta-
-  normal VaR is zero for a delta-hedged book and is breached 43% of the time.
-  Full revaluation on the smile is the only one with the right exception rate
-  (1.00%, Kupiec p = 0.98, excluding 17 days where the smile fit was degenerate).
+- **VIX vs option vol.** VIX is a variance swap rate, so with a negative skew
+  it sits above the at-the-money vol (ATM 11.3% vs VIX 14.2% and 12.7% vs
+  16.1% on two real SPX chains). Selling the straddle at the VIX level shows
+  +67 bp per trade; at the rescaled ATM level it is -14 bp after costs, which
+  is not significant (181 independent trades) and depends on the rescaling.
+- **VaR of the hedged book.** Five methods, backtested over 3,433 days.
+  Delta-normal VaR is zero by construction for a delta-hedged book (baseline
+  only). Delta-gamma-vega and both full revaluation methods pass the Kupiec
+  test; which one looks best depends on how the realised P&L is repriced.
 
 ## Run
 
@@ -108,15 +109,22 @@ One-day 99% VaR from a 500-day window, backtested 2013-2026 (3,433 days).
 | Full revaluation, parallel vol shift | 178 bp | 0.84% | 0.348 |
 | Full revaluation on the smile | 158 bp | 1.14% | 0.433 |
 
-Excluding the 17 days with a degenerate smile, full revaluation on the smile
-gives 1.00% exceptions (Kupiec p = 0.98) while the two parallel-shift methods
-are rejected. All methods fail the Christoffersen independence test: the
-exceptions cluster (10 of 39 in Feb-Apr 2020).
+On the full sample, delta-gamma-vega and both full revaluation methods pass
+the Kupiec test. The ranking between them is not robust: the realised P&L is
+itself repriced on the reconstructed smile, which favours the smile method.
+Repricing it with a parallel vol shift instead, full revaluation on the smile
+fails (2.18% exceptions). Delta-normal is zero by construction, since the book
+has no delta. All methods fail the Christoffersen independence test: the
+exceptions cluster (10 of 39 in Feb-Apr 2020). The largest "realised" losses
+(March 2020) fall on days where the smile fit is degenerate, so they are model
+errors as much as market moves.
 
 ![VaR 2020](output/figures/hedge/var_2020.png)
 
 ## Limitations
 
+- SPY is treated as European with no dividend yield (q = 0) on unadjusted
+  closes, so ex-dividend drops count as price moves.
 - Only the ATM level and the index-implied smile are real data. Individual
   strike quotes and bid-ask are modelled, except on the two SPX chains.
 - The smile shape is the weakest part: on the chains checked, OTM puts come

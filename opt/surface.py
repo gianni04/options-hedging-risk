@@ -48,8 +48,8 @@ def atm_vol(T, vix9d, vix, vix3m):
 def saturate(z):
     """Smooth saturation of standardised moneyness.
 
-    A hard clip leaves a kink. Its second derivative is a spike, and that spike
-    shows up as a negative density. tanh is smooth everywhere, so it does not.
+    tanh instead of a hard clip: a clip has a kink, which gives a negative
+    risk-neutral density at that point.
     """
     return Z_SAT * np.tanh(np.asarray(z, dtype=float) / Z_SAT)
 
@@ -293,11 +293,9 @@ def variance_swap(surface, T, n=GRID_N, sd=GRID_SD):
 def atm_scale(surface, T=CALIB_T):
     """Factor on the at-the-money level that makes the smile's variance swap equal VIX.
 
-    VIX is a variance swap, not an at-the-money vol: a negative skew puts it
-    above, by 6% to 35% of VIX on 3,920 of 3,934 days. On the other fourteen,
-    all in March 2020 but one, the slope sits at or near its box bound, the
-    saturated put wing carries the integral to forty-five times VIX or more, and
-    the answer depends on where the grid stops. Those return nan.
+    VIX is a 30-day variance swap rate, so with a negative skew it is above the
+    ATM vol. Returns nan when the smile is degenerate (variance swap more than
+    twice VIX, a few days in March 2020); the caller carries the previous factor.
     """
     if variance_swap(surface, T) > 2.0 * surface.vix:
         return np.nan
