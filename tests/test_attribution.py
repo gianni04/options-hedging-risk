@@ -1,4 +1,4 @@
-"""The decomposition has to answer why the money moved, not just how much."""
+"""The decomposition should say why the money moved, as well as how much."""
 
 from datetime import date, timedelta
 

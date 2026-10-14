@@ -110,7 +110,7 @@ One-day 99% VaR from a 500-day window, backtested 2013-2026 (3,433 days).
 | Full revaluation on the smile | 158 bp | 1.14% | 0.433 |
 
 On the full sample, delta-gamma-vega and both full revaluation methods pass
-the Kupiec test. The ranking between them is not robust: the realised P&L is
+the Kupiec test. The ranking between them is not stable: the realised P&L is
 itself repriced on the reconstructed smile, which favours the smile method.
 Repricing it with a parallel vol shift instead, full revaluation on the smile
 fails (2.18% exceptions). Delta-normal is zero by construction, since the book

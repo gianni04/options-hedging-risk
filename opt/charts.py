@@ -231,7 +231,7 @@ def term_structure(market, path: Path, days=range(7, 365, 7)) -> None:
 
 
 def equity(df: pd.DataFrame, path: Path, columns=None, title: str = None) -> None:
-    """Cumulative P&L with the drawdown underneath, never without it."""
+    """Cumulative P&L, with the drawdown plotted underneath."""
     cols = list(columns) if columns is not None else list(df.columns)
     fig, (top, bottom) = plt.subplots(
         2, 1, figsize=(8, 5), sharex=True, gridspec_kw={"height_ratios": [2, 1]}
