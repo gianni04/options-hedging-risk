@@ -3,6 +3,8 @@
 Delta hedging of SPY options, a daily volatility surface rebuilt from CBOE
 indices, and a VaR backtest of the hedged position. Python, 2011-2026 data.
 
+A short note with the method and results: [note/options-hedging-risk.pdf](note/options-hedging-risk.pdf).
+
 ![Smile](output/figures/lab/00_smile.png)
 
 ## Summary
