@@ -111,9 +111,10 @@ def load(ticker, start="1990-01-01", max_age_hours=12):
 def market_data(start="2011-01-04", underlying="SPY"):
     """Assemble the daily options-lab dataset: underlying OHLC plus the CBOE vol surface.
 
-    rate is the continuously-compounded equivalent of the ^IRX discount yield:
+    rate is the continuously-compounded equivalent of the ^IRX quote, which is
+    read as a simple money-market rate (act/360), not as a discount yield:
     r = ln(1 + y/100 * 91/360) / (91/365), for y the quoted 13-week T-bill
-    yield in percent. skewness = (100 - skew) / 10 is the risk-neutral 30-day
+    rate in percent. skewness = (100 - skew) / 10 is the risk-neutral 30-day
     skew implied by the CBOE SKEW index. Everything is aligned onto the
     underlying's trading dates; index columns are forward-filled at most 5
     sessions to bridge exchange-calendar gaps, rate is forward-filled without
